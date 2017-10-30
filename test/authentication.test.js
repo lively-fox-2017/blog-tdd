@@ -53,6 +53,18 @@ describe('Authentication', function () {
         });
     });
 
+    it('should return error 400 if passed object email is not valid', function (requestFinished) {
+      chai
+        .request(server)
+        .post('/auth/register')
+        .send({ name: 'Alexei Wahyudiputra', email: 'alexei', password: 'alexei' })
+        .end(function (err, response) {
+          response.status.should.equal(400);
+          response.body.should.be.an('object');
+          requestFinished();
+        });
+    });
+
     it('should return error 400 if passed object is not valid', function (requestFinished) {
       chai
         .request(server)
