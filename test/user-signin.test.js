@@ -16,19 +16,19 @@ describe('Sign In API: POST /signin', () => {
 	*/
 	const validUserCredentials = {
 		username: 'djokos',
-		passowrd: 'edanaingtea'
-	}
+		password: 'edanaingtea'
+	};
 	const invalidUsername = {
 		username: 'djokosss',
 		password: 'edanaingtea'
-	}
+	};
 	const invalidPassword = {
 		username: 'djokos',
 		password: 'uhuy'
-	}
-	const incompleUserCredentials = {
+	};
+	const incompleteUserCredentials = {
 		username: 'djokos'
-	}
+	};
 
 	/*
 	Before all test, create a new record of User with validUserCredentials for testing
@@ -59,7 +59,7 @@ describe('Sign In API: POST /signin', () => {
 		.end((err, response) => {
 			const appResponse = response.body;
 
-			appResponse.should.not.be.empty();
+			should.exist(appResponse);
 
 			appResponse.should.be.an('object');
 			appResponse.should.have.property('status');
@@ -70,7 +70,7 @@ describe('Sign In API: POST /signin', () => {
 			appResponse.status.should.be.a('number');
 			appResponse.message.should.be.a('string');
 			appResponse.payload.should.be.an('object');
-			appResponse.err.should.be.an('object');
+			should.not.exist(appResponse.err);
 
 			done();
 		});		
@@ -91,10 +91,10 @@ describe('Sign In API: POST /signin', () => {
 
 			appResponse.status.should.equal(200);
 			appResponse.payload.should.have.property('jwtoken');
-			appResponse.err.should.equal(null);
+			should.not.exist(appResponse.err);
 
 			jwtokenDecoded.should.be.an('object');
-			jwtokenDecoded.should.have.property('_id');
+			jwtokenDecoded.should.have.property('id');
 			jwtokenDecoded.should.have.property('username');
 
 			done();
@@ -114,8 +114,8 @@ describe('Sign In API: POST /signin', () => {
 			response.status.should.equal(422);
 
 			appResponse.status.should.equal(422);
-			appResponse.payload.should.not.have.property('jwtoken');
-			appResponse.err.should.not.equal(null);
+			should.not.exist(appResponse.payload);
+			should.exist(appResponse.err);
 
 			done();
 		});
@@ -127,15 +127,15 @@ describe('Sign In API: POST /signin', () => {
 	it('should return an error and not contain any payload if password is invalid', (done) => {
 		chai.request(app)
 		.post('/signin')
-		.send(invalidPassoword)
+		.send(invalidPassword)
 		.end((err, response) => {
 			const appResponse = response.body;
 
 			response.status.should.equal(422);
 
 			appResponse.status.should.equal(422);
-			appResponse.payload.should.not.have.property('jwtoken');
-			appResponse.err.should.not.equal(null);
+			should.not.exist(appResponse.payload);
+			should.exist(appResponse.err);
 
 			done();
 		});
@@ -147,15 +147,15 @@ describe('Sign In API: POST /signin', () => {
 	it('should return an error and not contain ny payload if credentials are incomplete', (done) => {
 		chai.request(app)
 		.post('/signin')
-		.send(incompleUserCredentials)
+		.send(incompleteUserCredentials)
 		.end((err, response) => {
 			const appResponse = response.body;
 
 			response.status.should.equal(422);
 
 			appResponse.status.should.equal(422);
-			appResponse.payload.should.not.have.property('jwtoken');
-			appResponse.err.should.not.equal(null);
+			should.not.exist(appResponse.payload);
+			should.exist(appResponse.err);
 
 			done();
 		});

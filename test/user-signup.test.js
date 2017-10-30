@@ -16,9 +16,9 @@ describe('Sign Up API: POST /signup', () => {
 	*/
 	const validUserCredentials = {
 		username: 'djokos',
-		passowrd: 'edanaingtea'
+		password: 'edanaingtea'
 	}
-	const incompleUserCredentials = {
+	const incompleteUserCredentials = {
 		username: 'djokos'
 	}
 
@@ -38,10 +38,12 @@ describe('Sign Up API: POST /signup', () => {
 		chai.request(app)
 		.post('/signup')
 		.send(validUserCredentials)
-		.end((err, response) => {
+		.end(function(err, response) {
 			const appResponse = response.body;
 
-			appResponse.should.not.be.empty();
+			response.status.should.equal(200);
+
+			should.exist(appResponse);
 
 			appResponse.should.be.an('object');
 			appResponse.should.have.property('status');
@@ -52,7 +54,7 @@ describe('Sign Up API: POST /signup', () => {
 			appResponse.status.should.be.a('number');
 			appResponse.message.should.be.a('string');
 			appResponse.payload.should.be.an('object');
-			appResponse.err.should.be.an('object');
+			should.not.exist(appResponse.err);
 
 			done();
 		});		
@@ -65,7 +67,7 @@ describe('Sign Up API: POST /signup', () => {
 		chai.request(app)
 		.post('/signup')
 		.send(validUserCredentials)
-		.end((err, response) => {
+		.end(function(err, response) {
 			const appResponse = response.body;
 			const jwtokenDecoded = jwt.verify(appResponse.payload.jwtoken, process.env.JWT_SECRET_KEY);
 
@@ -73,10 +75,10 @@ describe('Sign Up API: POST /signup', () => {
 
 			appResponse.status.should.equal(200);
 			appResponse.payload.should.have.property('jwtoken');
-			appResponse.err.should.equal(null);
+			should.not.exist(appResponse.err);
 
 			jwtokenDecoded.should.be.an('object');
-			jwtokenDecoded.should.have.property('_id');
+			jwtokenDecoded.should.have.property('id');
 			jwtokenDecoded.should.have.property('username');
 
 			done();
@@ -89,15 +91,15 @@ describe('Sign Up API: POST /signup', () => {
 	it('should return an error and not contain any payload if credentials are not valid', (done) => {
 		chai.request(app)
 		.post('/signup')
-		.send(incompleUserCredentials)
+		.send(incompleteUserCredentials)
 		.end((err, response) => {
 			const appResponse = response.body;
 
 			response.status.should.equal(409);
 
 			appResponse.status.should.equal(409);
-			appResponse.payload.should.not.have.property('jwtoken');
-			appResponse.err.should.not.equal(null);
+			should.not.exist(appResponse.payload);
+			should.exist(appResponse.err);
 
 			done();
 		});
@@ -118,8 +120,8 @@ describe('Sign Up API: POST /signup', () => {
 				response.status.should.equal(409);
 
 				appResponse.status.should.equal(409);
-				appResponse.payload.should.not.have.property('jwtoken');
-				appResponse.err.should.not.equal(null);
+				should.not.exist(appResponse.payload);
+				should.exist(appResponse.err);
 
 				done();
 			});
