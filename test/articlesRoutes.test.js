@@ -4,6 +4,7 @@ const chaiHTTP = require('chai-http')
 
 const app = require('../app')
 const User = require('../models/user')
+const Article = require('../models/article')
 const helper = require('../helpers/helper')
 
 chai.use(chaiHTTP)
@@ -17,7 +18,7 @@ var dummyDataUser = {
 }
 
 var dummyDataArticle = {
-  _id: "59f73940bc28be5c02328ad2",
+  _id: "59f75dddfd45eb73f44332f6",
   user: "59f72ccaa06261535e60a3c8",
   judul: "Polisi menangkap Ian JR sebagai pelaku pemerkosaan anak TK",
   deskripsi: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse suscipit tempus augue eu accumsan. Duis eget odio tellus. Fusce elit.",
@@ -32,6 +33,7 @@ describe('Article Routes result', function() {
     // console.log(res.body);
     User.create(dummyDataUser)
     .then((result) => {
+      // console.log(result);
       console.log("Berhasil Add Dummy Data");
       // User.findOne({username: "anton"}).then((result) => {
       //   if (result) {
@@ -60,6 +62,12 @@ describe('Article Routes result', function() {
   after(function() {
     User.remove().then((result) => {
       console.log("Berhasil Hapus");
+    }).catch((reason) => {
+      console.log(reason);
+    })
+
+    Article.remove().then((result) => {
+      console.log("Berhasil Hapus Article");
     }).catch((reason) => {
       console.log(reason);
     })
@@ -128,7 +136,7 @@ describe('Article Routes result', function() {
 
   it('Should return One Article', function(done) {
     chai.request(app)
-    .get('/articles/59f73940bc28be5c02328ad2')
+    .get('/articles/59f75dddfd45eb73f44332f6')
     .end((err, res) => {
       // console.log("---------->", res.body);
       res.status.should.equal(200)
@@ -144,52 +152,42 @@ describe('Article Routes result', function() {
     })
   })
 
-  it('Should return error when user trying to update article that not match his ID', function() {
+  it('Should return error when user trying to update article that not match his ID', function(done) {
     chai.request(app)
-    .put('/update/59f73940bc28be5c02328ad2')
-    .set('token', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1OWY3MmNjYWEwNjI2MTUzNWU2MGEzYzgiLCJ1c2VybmFtZSI6ImFudG9uIiwiaWF0IjoxNTA5Mzc2ODUxfQ.GSF3RYblfFstACVDSdllryzO2ga-SHHkxwR9U9e4zSN')
+    .put('/articles/update/59f75dddfd45eb73f44332f6')
+    .set('token', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWV9.TJVA95OrM7E2cBab30RMHrHDcEfxjoYZgeFONFh7HgQ')
     .end((err, res) => {
+      // console.log(res.body);
       res.status.should.equal(403)
       res.body.should.be.an('object')
       res.body.message.should.equal("Maaf anda tidak berhak merubah data tersebut")
+      done()
     })
   })
 
-  it('Should return error while theres empty required field', function() {
+  it('Should return error when article id is not found', function(done) {
     chai.request(app)
-    .put('/update/59f73940bc28be5c02328ad2')
-    .set('token', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1OWY3MmNjYWEwNjI2MTUzNWU2MGEzYzgiLCJ1c2VybmFtZSI6ImFudG9uIiwiaWF0IjoxNTA5Mzc2ODUxfQ.GSF3RYblfFstACVDSdllryzO2ga-SHHkxwR9U9e4zSM')
-    .send({
-      deskripsi: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse suscipit tempus augue eu accumsan. Duis eget odio tellus. Fusce elit."
-    })
-    .end((err, res) => {
-      res.status.should.equal(404)
-      res.body.should.be.an('object')
-      res.body.message.should.be.a('string')
-    })
-  })
-
-  it('Should return error when article id is not found', function() {
-    chai.request(app)
-    .put('/update/59f73940bc28be5c02328ada')
+    .put('/articles/update/59f73940bc28be5c02328ada')
     .set('token', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1OWY3MmNjYWEwNjI2MTUzNWU2MGEzYzgiLCJ1c2VybmFtZSI6ImFudG9uIiwiaWF0IjoxNTA5Mzc2ODUxfQ.GSF3RYblfFstACVDSdllryzO2ga-SHHkxwR9U9e4zSM')
     .send({
       judul: "Polisi menangkap Ian JR sebagai pelaku pemerkosaan anak TK",
       deskripsi: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse suscipit tempus augue eu accumsan. Duis eget odio tellus. Fusce elit."
     })
     .end((err, res) => {
+      // console.log(res);
       res.status.should.equal(400)
       res.body.should.be.an('object')
       res.body.message.should.equal("Data tidak ditemukan")
+      done()
     })
   })
 
-  it('Should return true / total updated data', function() {
+  it('Should return true / total updated data', function(done) {
     chai.request(app)
-    .put('/update/59f73940bc28be5c02328ad2')
+    .put('/articles/update/59f75dddfd45eb73f44332f6')
     .set('token', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1OWY3MmNjYWEwNjI2MTUzNWU2MGEzYzgiLCJ1c2VybmFtZSI6ImFudG9uIiwiaWF0IjoxNTA5Mzc2ODUxfQ.GSF3RYblfFstACVDSdllryzO2ga-SHHkxwR9U9e4zSM')
     .send({
-      judul: "Polisi menangkap Ian JR sebagai pelaku pemerkosaan anak TK",
+      judul: "Polisi menangkap Ian JR sebagai pelaku pemerkosaan anak SD",
       deskripsi: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse suscipit tempus augue eu accumsan. Duis eget odio tellus. Fusce elit."
     })
     .end((err, res) => {
@@ -198,6 +196,46 @@ describe('Article Routes result', function() {
       res.body.message.should.equal("Berhasil Update")
       res.body.data.should.have.property('n')
       res.body.data.should.have.property('ok')
+      done()
+    })
+  })
+
+  it('Should return error when user trying to delete article that not match his ID', function(done) {
+    chai.request(app)
+    .delete('/articles/delete/59f75dddfd45eb73f44332f6')
+    .set('token', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWV9.TJVA95OrM7E2cBab30RMHrHDcEfxjoYZgeFONFh7HgQ')
+    .end((err, res) => {
+      res.status.should.equal(403)
+      res.body.should.be.an('object')
+      res.body.message.should.equal("Maaf anda tidak berhak menghapus data tersebut")
+      done()
+    })
+  })
+
+  it('Should return error when article id is not found', function(done) {
+    chai.request(app)
+    .delete('/articles/delete/59f73940bc28be5c02328ada')
+    .set('token', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1OWY3MmNjYWEwNjI2MTUzNWU2MGEzYzgiLCJ1c2VybmFtZSI6ImFudG9uIiwiaWF0IjoxNTA5Mzc2ODUxfQ.GSF3RYblfFstACVDSdllryzO2ga-SHHkxwR9U9e4zSM')
+    .end((err, res) => {
+      res.status.should.equal(400)
+      res.body.should.be.an('object')
+      res.body.message.should.equal("Data tidak ditemukan")
+      done()
+    })
+  })
+
+  it('Should return true / total deleted data', function(done) {
+    chai.request(app)
+    .delete('/articles/delete/59f75dddfd45eb73f44332f6')
+    .set('token', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1OWY3MmNjYWEwNjI2MTUzNWU2MGEzYzgiLCJ1c2VybmFtZSI6ImFudG9uIiwiaWF0IjoxNTA5Mzc2ODUxfQ.GSF3RYblfFstACVDSdllryzO2ga-SHHkxwR9U9e4zSM')
+    .end((err, res) => {
+      // console.log(res.body);
+      res.status.should.equal(200)
+      res.body.should.be.an('object')
+      res.body.message.should.equal("Berhasil Hapus")
+      res.body.data.should.have.property('n')
+      res.body.data.should.have.property('ok')
+      done()
     })
   })
 })

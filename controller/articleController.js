@@ -3,7 +3,7 @@ const helper = require('../helpers/helper')
 
 module.exports = {
   findAll: (req, res) => {
-    Article.find().sort('judul').then((rowsArticle) => {
+    Article.find().populate('user').sort('judul').then((rowsArticle) => {
       // console.log("HHHHHHHHHHHHAAAAAAAAAAAAAAAAAAA");
       res.status(200).json({
         message: "Tampil Semua Article",
@@ -17,7 +17,7 @@ module.exports = {
   },
 
   findOne: (req, res) => {
-    Article.findOne({_id: req.params.id}).then((rowArticle) => {
+    Article.findOne({_id: req.params.id}).populate('user').then((rowArticle) => {
       // console.log("HAIIIIIIIIIIIIIIIIIII", req.params.id);
       // console.log("-------------------->", rowArticle);
       if (rowArticle) {
@@ -39,7 +39,8 @@ module.exports = {
 
   insert: (req, res) => {
     // console.log("HHHHHHHHHHHHAAAAAAAAAAAAAAAAAAA", req.body);
-    Article.create(helper.dataArticle(req.body)).then((result) => {
+    // Article.create(helper.dataArticle(req.body)).then((result) => {
+    Article.create(req.body).then((result) => {
       // console.log("------------------------------ID ", result);
       res.status(200).json({
         message: "Berhasil Menambah Article",
@@ -54,8 +55,11 @@ module.exports = {
 
   update: (req, res) => {
     Article.findOne({_id: req.params.id}).then((rowArticle) => {
+      // console.log(req.headers.token);
       let userId = helper.authorization(req.headers.token)
-      if (rowArticle.user !== userId) {
+      // console.log("---------------------------> ", rowArticle.user);
+      // console.log("---------------------------> ", userId);
+      if (rowArticle.user != userId) {
         res.status(403).json({
           message: "Maaf anda tidak berhak merubah data tersebut"
         })
@@ -68,43 +72,48 @@ module.exports = {
           }
         })
         .then((rowUpdateArticle) => {
-          if (rowUpdateArticle.n != 0) {
-            res.status(200).json({
-              message: "Berhasil Update",
-              data: rowUpdateArticle
-            })
-          } else {
-            res.status(400).json({
-              message: "Data tidak ditemukan"
-            })
-          }
+          // console.log(rowUpdateArticle);
+          res.status(200).json({
+            message: "Berhasil Update",
+            data: rowUpdateArticle
+          })
         }).catch((reason) => {
           res.status(404).json({
             message: reason
           })
         })
       }
+    }).catch((reason) => {
+      res.status(400).json({
+        message: "Data tidak ditemukan"
+      })
     })
   },
-  //
-  // delete: (req, res) => {
-  //   // console.log(req.body.imgName);
-  //   Product.remove({_id: req.params.id}).then((rowDeleteProduct) => {
-  //     if (rowDeleteProduct.result.n != 0) {
-  //       image.deleteFile(req.body.imgName)
-  //       res.json({
-  //         message: "Berhasil Hapus",
-  //         data: rowDeleteProduct
-  //       })
-  //     } else {
-  //       res.json({
-  //         message: "Maaf Id tersebut tidak ada"
-  //       })
-  //     }
-  //   }).catch((reason) => {
-  //     res.json({
-  //       message: reason
-  //     })
-  //   })
-  // }
+
+  delete: (req, res) => {
+    // console.log(req.params.id);
+    Article.findOne({_id: req.params.id}).then((rowArticle) => {
+      let userId = helper.authorization(req.headers.token)
+      if (rowArticle.user != userId) {
+        res.status(403).json({
+          message: "Maaf anda tidak berhak menghapus data tersebut"
+        })
+      } else {
+        Article.remove({_id: req.params.id}).then((rowDeleteArticle) => {
+          res.status(200).json({
+            message: "Berhasil Hapus",
+            data: rowDeleteArticle
+          })
+        }).catch((reason) => {
+          res.json({
+            message: reason
+          })
+        })
+      }
+    }).catch((reason) => {
+      res.status(400).json({
+        message: "Data tidak ditemukan"
+      })
+    })
+  }
 }
