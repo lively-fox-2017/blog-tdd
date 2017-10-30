@@ -1,3 +1,4 @@
+require('dotenv').config()
 const express = require('express')
 const app = express()
 const bodyParser = require('body-parser')
@@ -6,7 +7,6 @@ const http = require('http')
 const article = require('./routers/article.js')
 const user = require('./routers/user.js')
 const auth = require('./routers/auth.js')
-require('dotenv').config()
 
 app.use(cors())
 // parse application/x-www-form-urlencoded
