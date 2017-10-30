@@ -19,6 +19,7 @@ const ArticleSchema = new Schema({
   },
   slug: {
     type: String,
+    unique: true,
     required: [true, 'Slug is required']
   },
   featured_image: String,
