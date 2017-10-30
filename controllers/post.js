@@ -19,7 +19,22 @@ module.exports = class Controller{
         res.send({message:'berhasil', post})
       })
       .catch(err=>{
-        res.send({message:'gagal'})
+        res.send({message:'gagal', err})
+      })
+    }
+
+    static getAll(req, res){
+      let token = req.params.token;
+      jwtprocessor.verify(token)
+      .then(response=>{
+        let user = mongoose.Types.ObjectId(response.id);
+        return Models.Post.find({user})
+      })
+      .then(posts=>{
+        res.send({message:'berhasil', posts})
+      })
+      .catch(err=>{
+        res.send({message:'gagal', err})
       })
     }
 };

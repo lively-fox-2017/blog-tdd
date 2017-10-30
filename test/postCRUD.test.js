@@ -62,7 +62,7 @@ describe('crud post', function(){
 
   it ('should edit post', function(done){
     chai.request(app)
-    .post('/post')
+    .put('/post')
     .send({
       token:token,
       title:'pembuangan sampah pada tempatnya',
@@ -77,5 +77,25 @@ describe('crud post', function(){
       expect(response.body.post.content).to.equal('pembakaran sampah disebabkan oleh kemerdekaan membuang sampah sembarangan')
       done()
     })
+  })
+
+  it('should get all post by one user', function(done){
+    chai.request(app)
+    .get('/post/'+token)
+    .end(function (err, response) {
+       expect(err).to.be.null;
+       expect(response).to.have.status(200);
+       expect(response.body).have.property('message');
+       expect(response.body.message).to.equal('berhasil');
+       expect(response.body).have.property('posts');
+       expect(response.body.posts).to.be.an("array");
+       if(response.body.posts.length>0){
+         expect(response.body.posts[0]).have.property('title');
+         expect(response.body.posts[0]).have.property('content');
+         expect(response.body.posts[0]).have.property('comments');
+       }
+       done();
+    });
+
   })
 })
