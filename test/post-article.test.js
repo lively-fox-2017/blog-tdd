@@ -3,6 +3,8 @@ const should = chai.should();
 const chaiHttp = require('chai-http');
 const server = require('../server');
 
+const Article = require('../models/Article');
+
 chai.use(chaiHttp);
 
 const article = {
@@ -15,6 +17,10 @@ const article = {
 };
 
 describe('post /articles', function () {
+  after(function () {
+    if (article.hasOwnProperty('_id'))
+      Article.deleteOne({ _id: article._id }).then(console.log('Deleted test data'));
+  });
   it('should return inserted article', function (requestFinished) {
     chai
       .request(server)
@@ -38,6 +44,9 @@ describe('post /articles', function () {
         if (article.featured_image)
           response.body.featured_image.should.equal(article.featured_image);
         response.body.author.should.equal(article.author);
+
+        article._id = response.body._id;
+
         requestFinished();
       });
   });
