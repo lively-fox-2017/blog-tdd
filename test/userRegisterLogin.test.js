@@ -8,10 +8,8 @@ const Models = require('../models/all-models');
 chai.use(chaiHttp)
 
 describe('user api test', function(){
-  after(function(done) {
-    console.log('THIS ISS AFTEEERRRR!!!!!!!!!!')
-    console.log(Models.User);
-    Models.User.remove({}, done())
+  before(function(done) {
+    Models.User.remove({}, done)
   });
   it ('should create new user', function(done){
 
