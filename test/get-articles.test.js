@@ -5,7 +5,7 @@ const server = require('../server');
 
 chai.use(chaiHttp);
 
-describe('get /articles', function () {
+describe('GET /articles', function () {
   it('should return article list', function (requestFinished) {
     chai.request(server)
       .get('/articles')
