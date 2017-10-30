@@ -10,7 +10,7 @@ const models = require('./../models');
 
 chai.use(chaiHttp);
 
-describe('Sign Up API: POST /signup', () => {
+describe('Sign In API: POST /signin', () => {
 	/*
 	Fake user credentials for testing
 	*/
@@ -18,25 +18,43 @@ describe('Sign Up API: POST /signup', () => {
 		username: 'djokos',
 		passowrd: 'edanaingtea'
 	}
+	const invalidUsername = {
+		username: 'djokosss',
+		password: 'edanaingtea'
+	}
+	const invalidPassword = {
+		username: 'djokos',
+		password: 'uhuy'
+	}
 	const incompleUserCredentials = {
 		username: 'djokos'
 	}
 
 	/*
-	Empty the database after each test
+	Before all test, create a new record of User with validUserCredentials for testing
 	*/
-	afterEach(done => {
+	before(done => {
+		let user = new models.User(validUserCredentials);
+		user.save((err, userCreated) => {
+			done();
+		});
+	})
+
+	/*
+	After all test, empty the database
+	*/
+	after(done => {
 		models.User.remove({}, (err) => {
 			done();
 		});
 	});
 
 	/*
-	Test POST /signup response object
+	Test POST /signin response object
 	*/
 	it('should generate a generic application response {status, message, payload, err}', (done) => {
 		chai.request(app)
-		.post('/signup')
+		.post('/signin')
 		.send(validUserCredentials)
 		.end((err, response) => {
 			const appResponse = response.body;
@@ -59,11 +77,11 @@ describe('Sign Up API: POST /signup', () => {
 	});
 
 	/*
-	Test POST /signup with valid credentials
+	Test POST /signin with valid credentials
 	*/
 	it('should contain jwtoken inside payload if credentials are valid', (done) => {
 		chai.request(app)
-		.post('/signup')
+		.post('/signin')
 		.send(validUserCredentials)
 		.end((err, response) => {
 			const appResponse = response.body;
@@ -84,18 +102,18 @@ describe('Sign Up API: POST /signup', () => {
 	});
 
 	/*
-	Test POST /signup with incomplete credentials
+	Test POST /signin with invalid username
 	*/
-	it('should return an error and not contain any payload if credentials are not valid', (done) => {
+	it('should return an error and not contain any payload if username is invalid', (done) => {
 		chai.request(app)
-		.post('/signup')
-		.send(incompleUserCredentials)
+		.post('/signin')
+		.send(invalidUsername)
 		.end((err, response) => {
 			const appResponse = response.body;
 
-			response.status.should.equal(409);
+			response.status.should.equal(422);
 
-			appResponse.status.should.equal(409);
+			appResponse.status.should.equal(422);
 			appResponse.payload.should.not.have.property('jwtoken');
 			appResponse.err.should.not.equal(null);
 
@@ -104,25 +122,42 @@ describe('Sign Up API: POST /signup', () => {
 	});
 
 	/*
-	Test POST /signup with duplicate username
+	Test POST /signin with invalid password
 	*/
-	it('should return an error and not contain any payload if username is not unique', (done) => {
-		let user = new models.User(validUserCredentials);
-		user.save((err, userCreated) => {
-			chai.request(app)
-			.post('/signup')
-			.send(validUserCredentials)
-			.end((err, response) => {
-				const appResponse = response.body;
+	it('should return an error and not contain any payload if password is invalid', (done) => {
+		chai.request(app)
+		.post('/signin')
+		.send(invalidPassoword)
+		.end((err, response) => {
+			const appResponse = response.body;
 
-				response.status.should.equal(409);
+			response.status.should.equal(422);
 
-				appResponse.status.should.equal(409);
-				appResponse.payload.should.not.have.property('jwtoken');
-				appResponse.err.should.not.equal(null);
+			appResponse.status.should.equal(422);
+			appResponse.payload.should.not.have.property('jwtoken');
+			appResponse.err.should.not.equal(null);
 
-				done();
-			});
+			done();
+		});
+	});
+
+	/*
+	Test POST /signin with incomplete credentials
+	*/
+	it('should return an error and not contain ny payload if credentials are incomplete', (done) => {
+		chai.request(app)
+		.post('/signin')
+		.send(incompleUserCredentials)
+		.end((err, response) => {
+			const appResponse = response.body;
+
+			response.status.should.equal(422);
+
+			appResponse.status.should.equal(422);
+			appResponse.payload.should.not.have.property('jwtoken');
+			appResponse.err.should.not.equal(null);
+
+			done();
 		});
 	});
 });
