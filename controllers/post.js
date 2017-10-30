@@ -62,4 +62,21 @@ module.exports = class Controller{
         res.send({message:'gagal', err})
       })
     }
+
+    static delete(req,res){
+      let token = req.body.token;
+      let id = req.body.id
+      jwtprocessor.verify(token)
+      .then(response=>{
+        let user = mongoose.Types.ObjectId(response.id);
+        return Models.Post.remove({_id:id, user})
+      })
+      .then(posts=>{
+        res.send({message:'berhasil'})
+      })
+      .catch(err=>{
+        console.log(err);
+        res.send({message:'gagal', err})
+      })
+    }
 };

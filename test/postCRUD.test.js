@@ -101,6 +101,21 @@ describe('crud post', function(){
        }
        done();
     });
+  })
 
+  it('should delete one post by id belong to a user', function(done){
+    chai.request(app)
+    .delete('/post')
+    .send({
+      postId,
+      token
+    })
+    .end(function(err, response){
+      expect(err).to.be.null;
+      expect(response).to.have.status(200);
+      expect(response.body).have.property('message');
+      expect(response.body.message).to.equal('berhasil');
+      done()
+    })
   })
 })
