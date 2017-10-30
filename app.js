@@ -6,6 +6,7 @@ const http = require('http')
 require('dotenv').config();
 
 const userRoute = require('./routes/userRoute');
+const authRoute = require('./routes/authRoute');
 
 app.use(cors())
 // parse application/x-www-form-urlencoded
@@ -16,6 +17,7 @@ app.use(bodyParser.urlencoded({
 app.use(bodyParser.json())
 
 app.use('/api/user', userRoute);
+app.use('/api/auth', authRoute);
 
 var server = http.createServer(app);
 server.listen(process.env.PORT || 3000, function() {
