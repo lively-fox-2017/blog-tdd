@@ -1,5 +1,7 @@
 'use strict'
 
+const User = require('./user');
+
 const getDbHost = () => {
 	switch(process.env.NODE_ENV) {
 		case 'production':
@@ -11,8 +13,8 @@ const getDbHost = () => {
 	}
 }
 
-const mongoose = require('mongoose');
+const mongoose = require('mongoose', { useMongoClient: true });
 mongoose.connect(getDbHost());
 mongoose.Promise = global.Promise;
 
-module.exports = { };
+module.exports = { User };
