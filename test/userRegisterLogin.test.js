@@ -8,11 +8,11 @@ const Models = require('../models/all-models');
 chai.use(chaiHttp)
 
 describe('user api test', function(){
-  before(function(done) {
-    Models.User.remove({}, done)
+  after(function(done) {
+    Models.User.remove({email: 'rasyid.xyz@gmail.com'}, done)
   });
-  it ('should create new user', function(done){
 
+  it ('should create new user', function(done){
       chai.request(app)
       .post('/user/create')
       .send({
@@ -27,8 +27,8 @@ describe('user api test', function(){
         expect(response.body.message).to.equal('berhasil');
         done()
       })
-
   });
+
   it ('should return error when same email input', function(done){
 
       chai.request(app)
@@ -55,6 +55,7 @@ describe('user api test', function(){
         password: 'nncrawler'
       })
       .end(function (err, response){
+        // console.log(response.body);
         expect(err).to.be.null;
         expect(response).to.have.status(200);
         expect(response.body).to.have.property('message');
