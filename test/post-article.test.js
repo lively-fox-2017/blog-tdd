@@ -3,8 +3,6 @@ const should = chai.should();
 const chaiHttp = require('chai-http');
 const server = require('../server');
 
-const Article = require('../models/Article');
-
 chai.use(chaiHttp);
 
 const article = {
@@ -16,11 +14,7 @@ const article = {
   author: '59f0829e75c2503783f92f33'
 };
 
-describe('post /articles', function () {
-  after(function () {
-    if (article.hasOwnProperty('_id'))
-      Article.deleteOne({ _id: article._id }).then(console.log('Deleted test data'));
-  });
+describe('POST /articles', function () {
   it('should return inserted article', function (requestFinished) {
     chai
       .request(server)
@@ -62,3 +56,5 @@ describe('post /articles', function () {
       })
   })
 });
+
+module.exports = article._id;
