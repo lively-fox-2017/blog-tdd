@@ -11,6 +11,27 @@ const ArticleController = {
       });
   },
 
+  fetchById: (req, res) => {
+    Article
+      .findById(req.params.id)
+      .then((article) => {
+
+        if (!article)
+          res.status(404).json({});
+        else
+          res.status(200).json(article);
+
+      })
+      .catch((err) => {
+
+        if (err.name === 'CastError')
+          res.status(404).json({});
+        else
+          res.status(400).json(err);
+
+      });
+  },
+
   create: (req, res) => {
     Article.create({
       title: req.body.title,
@@ -25,6 +46,79 @@ const ArticleController = {
       })
       .catch((err) => {
         res.status(400).json(err);
+      });
+  },
+
+  update: (req, res) => {
+    Article
+      .findById(req.params.id)
+      .then((article) => {
+
+        if (!article) {
+          res.status(404).json({});
+        } else {
+
+          Article
+            .updateOne(
+              { _id: req.params.id },
+              {
+                title: req.body.title,
+                content: req.body.content,
+                excerpt: req.body.excerpt,
+                slug: req.body.slug,
+                featured_image: req.body.featured_image,
+                author: req.body.author
+              },
+              { runValidators: true }
+            )
+            .then((status) => {
+              res.status(200).json(article);
+            })
+            .catch((err) => {
+              res.status(400).json(err);
+            });
+
+        }
+
+      })
+      .catch((err) => {
+
+        if (err.name === 'CastError')
+          res.status(404).json({});
+        else
+          res.status(400).json(err);
+
+      });
+  },
+
+  delete: (req, res) => {
+    Article
+      .findById(req.params.id)
+      .then((article) => {
+
+        if (!article) {
+          res.status(404).json({});
+        } else {
+
+          Article
+            .deleteOne({ _id: req.params.id })
+            .then((status) => {
+              res.status(200).json(article);
+            })
+            .catch((err) => {
+              res.status(400).json(err);
+            });
+
+        }
+
+      })
+      .catch((err) => {
+
+        if (err.name === 'CastError')
+          res.status(404).json({});
+        else
+          res.status(400).json(err);
+
       });
   }
 };
