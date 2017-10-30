@@ -7,4 +7,7 @@ const multer  = require('multer');
 
 const app = express();
 
-app.listen(process.env.PORT || 3000, console.log(`server running on port ${port}`));
+const port = process.env.PORT || 3000;
+app.listen(port, console.log(`${process.env.NODE_ENV} server running on port ${port}`));
+
+module.exports = app;
