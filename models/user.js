@@ -88,7 +88,7 @@ class Model {
             var token = jwt.sign({ username: data.username, _id:data._id }, process.env.JWT_KEY);
             resolve({token})
           }
-          reject('gagal')
+          reject({message:'gagal login'})
         }).catch((err)=>{
           reject(err)
         })

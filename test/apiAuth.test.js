@@ -65,5 +65,16 @@ describe('testing api auth', function() {
         done()
       })
     })
+    it('should response message gagal login', function(done) {
+      chai.request(app).post('/api/auth/login').send({
+        username: 'User Baru',
+        password: 'paeh'
+      }).end(function(err, response) {
+        response.status.should.equal(500)
+        response.body.should.be.an('object')
+        response.body.message.should.equal('gagal login')
+        done()
+      })
+    })
   })
 })
