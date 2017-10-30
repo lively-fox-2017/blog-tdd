@@ -19,18 +19,24 @@ class UserCtrl {
         .then((users) => {
           res.status(200).json(users);
         })
-        .catch((err) => {
-          res.status(400).json(err);
-        })
     } else {
       User.find({})
         .then((users) => {
           res.status(200).json(users);
         })
-        .catch((err) => {
-          res.status(400).json(err);
-        })
     }
+  }
+
+  static updateUser(req, res, next) {
+    User.findOneAndUpdate({
+        userID: req.params.userID
+      }, req.body)
+      .then((user) => {
+        res.status(200).json(user);
+      })
+      .catch((err) => {
+        res.status(400).json(err);
+      })
   }
 }
 

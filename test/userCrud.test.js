@@ -142,6 +142,28 @@ describe('Init Connection', function() {
           done();
         })
     });
+    it('It should return specific user which parameter specified', (done) => {
+      chai.request(app)
+        .get('/api/user/get_user/' + 123321123312)
+        .send()
+        .end(function(err, response) {
+          if (err)
+            console.log(err.text);
+          response.status.should.equal(200);
+          response.body.should.be.an('array');
+          response.body.should.have.lengthOf(1);
+          response.body[0].should.have.property('_id');
+          response.body[0].should.have.property('userID');
+          response.body[0].should.have.property('name');
+          response.body[0].should.have.property('email');
+          response.body[0].should.have.property('lastLogin');
+          response.body[0].should.have.property('createdAt');
+          response.body[0].userID.should.equal('123321123312');
+          response.body[0].name.should.equal('Foo');
+          response.body[0].email.should.equal('foo@bar.com');
+          done();
+        })
+    });
   });
 
   describe('UPDATE users route', () => {
@@ -167,8 +189,56 @@ describe('Init Connection', function() {
         })
     });
 
-    // it('It should return updated ', (done) => {
-    //
-    // });
+    it('It should return updated ', (done) => {
+      chai.request(app)
+        .put('/api/user/update_user/' + 123321123312)
+        .send({
+          lastLogin: new Date()
+        })
+        .end(function(err, response) {
+          if (err)
+            console.log(err.text);
+          response.status.should.equal(200);
+          response.body.should.be.an('object');
+          response.body.should.have.property('_id');
+          response.body.should.have.property('userID');
+          response.body.should.have.property('name');
+          response.body.should.have.property('email');
+          response.body.should.have.property('lastLogin');
+          response.body.should.have.property('createdAt');
+          response.body.userID.should.equal('123321123312');
+          response.body.name.should.equal('Foo');
+          response.body.email.should.equal('foo@bar.com');
+          done();
+        })
+    });
+
+    it('It should return error because date is not valid', (done) => {
+      chai.request(app)
+        .put('/api/user/update_user/' + 123321123312)
+        .send({
+          lastLogin: 'asdasd'
+        })
+        .end(function(err, response) {
+          if (err)
+            console.log(err.text);
+          response.status.should.equal(400);
+          done();
+        })
+    });
+
+    it('It should return error because no params', (done) => {
+      chai.request(app)
+        .put('/api/user/update_user/')
+        .send({
+          lastLogin: 'asdasd'
+        })
+        .end(function(err, response) {
+          if (err)
+            console.log(err.text);
+          response.status.should.equal(400);
+          done();
+        })
+    });
   });
 });
