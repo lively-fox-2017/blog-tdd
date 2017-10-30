@@ -1,12 +1,15 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
+mongoose.Promise = global.Promise;
 if (mongoose.connection.readyState === 0) {
   mongoose.connect(require('./connection-string'));
 }
 
 
 var newSchema = new Schema({
-  
+  'email' : {type: String, required:true, unique:true},
+  'username' : {type: String, required:true, unique:true},
+  'password' : {type: String, required:true},
   'createdAt': { type: Date, default: Date.now },
   'updatedAt': { type: Date, default: Date.now }
 });
