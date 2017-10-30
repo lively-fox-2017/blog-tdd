@@ -15,8 +15,33 @@ module.exports = class Controller{
         post.user = mongoose.Types.ObjectId(response.id);
         return Models.Post.create(post)
       })
+      .then(createdPost=>{
+        res.send({message:'berhasil', post:createdPost})
+      })
+      .catch(err=>{
+        res.send({message:'gagal', err})
+      })
+    }
+
+    static update(req, res){
+      let postId = mongoose.Types.ObjectId(req.body.postId);
+
+      jwtprocessor.verify(req.body.token)
+      .then(response=>{
+        let user = mongoose.Types.ObjectId(response.id);
+        return Models.Post.findOne({_id:postId, user})
+      })
       .then(post=>{
-        res.send({message:'berhasil', post})
+        if(post){
+          post.title = req.body.title;
+          post.content = req.body.content;
+          return post.save()
+        }else{
+          throw 'post not found'
+        }
+      })
+      .then(savedPost=>{
+        res.send({message:'berhasil', post:savedPost})
       })
       .catch(err=>{
         res.send({message:'gagal', err})

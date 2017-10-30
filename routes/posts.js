@@ -4,5 +4,6 @@ const controller = require('../controllers/post');
 
 router.post('/', controller.post);
 router.get('/:token', controller.getAll);
+router.put('/', controller.update);
 
 module.exports = router;

@@ -6,7 +6,9 @@ const app = require('../app');
 const Models = require('../models/all-models');
 const jwtprocessor = require('../helpers/jwtprocessor');
 chai.use(chaiHttp)
+
 let token = null;
+let postId = null;
 
 describe('crud post', function(){
   before(function(done){
@@ -50,6 +52,8 @@ describe('crud post', function(){
       content:'penumpukan sampah disebabkan oleh kemerdekaan membuang sampah sembarangan'
     })
     .end(function(err, response){
+      postId = response.body.post._id
+
       expect(err).to.be.equal(null);
       expect(response.body).have.property('message');
       expect(response.body.message).to.equal('berhasil');
@@ -66,7 +70,8 @@ describe('crud post', function(){
     .send({
       token:token,
       title:'pembuangan sampah pada tempatnya',
-      content:'pembakaran sampah disebabkan oleh kemerdekaan membuang sampah sembarangan'
+      content:'pembakaran sampah disebabkan oleh kemerdekaan membuang sampah sembarangan',
+      postId
     })
     .end(function(err, response){
       expect(err).to.be.equal(null);
