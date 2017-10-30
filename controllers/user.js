@@ -25,7 +25,8 @@ module.exports = class Controller{
     Models.User.findOne(request)
     .then(user=>{
       if(user){
-        jwtprocessor.sign({email:user.email, username:user.username}, function(err, token){
+        console.log(user);
+        jwtprocessor.sign({email:user.email, username:user.username, id:user._id}, function(err, token){
           if(err){
             throw err
           }else{

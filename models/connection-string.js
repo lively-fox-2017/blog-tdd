@@ -6,7 +6,7 @@
 
 var url = require('url')
 
-var uri = 'mongodb://localhost:27017/'+process.env.NODE_ENV;
+var uri = 'mongodb://localhost:27017/blog_'+process.env.NODE_ENV;
 if (!uri) {
   throw new Error(
     '\033[31mYou need to provide the connection string. ' +
