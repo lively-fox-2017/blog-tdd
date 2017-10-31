@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+const jwt = require('jsonwebtoken')
 const idvalidator = require('mongoose-id-validator');
 mongoose.connect('mongodb://localhost/blogtdd_' + process.env.NODE_ENV, {
   useMongoClient: true
@@ -30,6 +31,8 @@ var Blog = mongoose.model('Blog', blogSchema)
 class Model {
   static create(insert) {
     return new Promise((resolve, reject) => {
+      var decoded = jwt.verify(insert.author, process.env.JWT_KEY)
+      insert.author = decoded._id
       Blog.create({
         title: insert.title,
         content: insert.content,
@@ -43,46 +46,58 @@ class Model {
     })
   }
   static read() {
-    return new Promise((resolve, reject)=>{
-      Blog.find().then((data)=>{
+    return new Promise((resolve, reject) => {
+      Blog.find().then((data) => {
         resolve(data)
-      }).catch((err)=>{
+      }).catch((err) => {
         reject(err)
       })
     })
   }
   static readOne(id) {
-    return new Promise((resolve, reject)=>{
-      Blog.findOne({"_id":id}).then((data)=>{
+    return new Promise((resolve, reject) => {
+      Blog.findOne({
+        "_id": id
+      }).then((data) => {
         resolve(data)
-      }).catch((err)=>{
+      }).catch((err) => {
         reject(err)
       })
     })
   }
   static readByUserId(id) {
-    return new Promise((resolve, reject)=>{
-      Blog.find({author:id}).then((data)=>{
+    return new Promise((resolve, reject) => {
+      var decoded = jwt.verify(id, process.env.JWT_KEY)
+      id = decoded._id
+      Blog.find({
+        author: id
+      }).then((data) => {
         resolve(data)
-      }).catch((err)=>{
+      }).catch((err) => {
         reject(err)
       })
     })
   }
   static delete(id) {
-    return new Promise((resolve, reject)=>{
-      Blog.findOneAndRemove({"_id":id}).then((data)=>{
+    return new Promise((resolve, reject) => {
+      Blog.findOneAndRemove({
+        "_id": id
+      }).then((data) => {
         resolve(data)
-      }).catch((err)=>{
+      }).catch((err) => {
         reject(err)
       })
     })
   }
   static update(update) {
-    return new Promise((resolve, reject)=>{
-      Blog.findOneAndUpdate({"_id":update._id}, update, {new:true}).then((updated)=>{
+    return new Promise((resolve, reject) => {
+      Blog.findOneAndUpdate({
+        "_id": update._id
+      }, update, {
+        new: true
+      }).then((updated) => {
         resolve(updated)
-      }).catch((err)=>{
+      }).catch((err) => {
         reject(err)
       })
     })
