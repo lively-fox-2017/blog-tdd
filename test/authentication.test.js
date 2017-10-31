@@ -3,7 +3,7 @@ const should = chai.should();
 const chaiHttp = require('chai-http');
 const server = require('../server');
 
-const User = require('../models/User');
+const deleteAllUser = require('../helpers/deleteAllUser');
 
 chai.use(chaiHttp);
 
@@ -16,9 +16,11 @@ const newUser = {
 describe('Authentication', function () {
 
   before (() => {
-    User.deleteMany({}).then(() => {
-      console.log('Cleared `users` collection');
-    });
+    deleteAllUser();
+  });
+
+  after (() => {
+    deleteAllUser();
   });
 
   describe('POST /auth/register', function () {

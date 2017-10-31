@@ -3,7 +3,7 @@ const should = chai.should();
 const chaiHttp = require('chai-http');
 const server = require('../server');
 
-const Article = require('../models/Article');
+const deleteAllArticle = require('../helpers/deleteAllArticle');
 
 chai.use(chaiHttp);
 
@@ -19,9 +19,7 @@ const article = {
 describe('Article CRUD', function () {
 
   before (() => {
-    Article.deleteMany({}).then(() => {
-      console.log('Cleared `articles` collection');
-    });
+    deleteAllArticle();
   });
 
   describe('POST /articles', function () {
