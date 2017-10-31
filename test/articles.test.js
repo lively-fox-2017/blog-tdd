@@ -78,15 +78,14 @@ describe('Article CRUD', function () {
     });
   });
 
-  describe('GET /articles/:id', function () {
+  describe('GET /articles/:slug', function () {
     it('should return an article', function (requestFinished) {
       chai
         .request(server)
-        .get('/articles/' + article._id)
+        .get('/articles/' + article.slug)
         .end(function (err, response) {
           response.status.should.equal(200);
           response.body.should.be.an('object');
-          response.body.should.have.property('_id');
           response.body.should.have.property('_id');
           response.body.should.have.property('title');
           response.body.should.have.property('content');
@@ -97,20 +96,10 @@ describe('Article CRUD', function () {
           requestFinished();
         });
     });
-    it('should return error 404 if ID doesn\'t exist', function (requestFinished) {
+    it('should return error 404 if slug doesn\'t exist', function (requestFinished) {
       chai
         .request(server)
-        .get('/articles/59f0829e75c2503783f92f33')
-        .end(function (err, response) {
-          response.status.should.equal(404);
-          response.body.should.be.an('object');
-          requestFinished();
-        });
-    });
-    it('should return error 404 if ID is invalid', function (requestFinished) {
-      chai
-        .request(server)
-        .get('/articles/asdfghjkl')
+        .get('/articles/randomslugthatwontreturnsomething')
         .end(function (err, response) {
           response.status.should.equal(404);
           response.body.should.be.an('object');
@@ -119,11 +108,11 @@ describe('Article CRUD', function () {
     });
   });
 
-  describe('PUT /articles/:id', function () {
+  describe('PUT /articles/:slug', function () {
     it('should return updated article', function (requestFinished) {
       chai
         .request(server)
-        .put('/articles/' + article._id)
+        .put('/articles/' + article.slug)
         .send(article)
         .end(function (err, response) {
           response.status.should.equal(200);
@@ -147,21 +136,10 @@ describe('Article CRUD', function () {
           requestFinished();
         });
     });
-    it('should return error 404 if ID doesn\'t exist ', function (requestFinished) {
+    it('should return error 404 if slug doesn\'t exist ', function (requestFinished) {
       chai
         .request(server)
-        .put('/articles/59f0829e75c2503783f92f33')
-        .send(article)
-        .end(function (err, response) {
-          response.status.should.equal(404);
-          response.body.should.be.an('object');
-          requestFinished();
-        });
-    });
-    it('should return error 404 if ID is invalid', function (requestFinished) {
-      chai
-        .request(server)
-        .put('/articles/asdfghjkl')
+        .put('/articles/randomslugthatwontreturnsomething')
         .send(article)
         .end(function (err, response) {
           response.status.should.equal(404);
@@ -172,7 +150,7 @@ describe('Article CRUD', function () {
     it('should return error 400 if passed an invalid object', function (requestFinished) {
       chai
         .request(server)
-        .put('/articles/' + article._id)
+        .put('/articles/' + article.slug)
         .send({})
         .end(function (err, response) {
           response.status.should.equal(400);
@@ -182,11 +160,11 @@ describe('Article CRUD', function () {
     });
   });
 
-  describe('DELETE /articles/:id', function () {
+  describe('DELETE /articles/:slug', function () {
     it('should return deleted article', function (requestFinished) {
       chai
         .request(server)
-        .delete('/articles/' + article._id)
+        .delete('/articles/' + article.slug)
         .end(function (err, response) {
           response.status.should.equal(200);
           response.body.should.be.an('object');
@@ -200,20 +178,10 @@ describe('Article CRUD', function () {
           requestFinished();
         });
     });
-    it('should return error 404 if ID doesn\'t exist', function (requestFinished) {
+    it('should return error 404 if slug doesn\'t exist', function (requestFinished) {
       chai
         .request(server)
         .delete('/articles/59f0829e75c2503783f92f33')
-        .end(function (err, response) {
-          response.status.should.equal(404);
-          response.body.should.be.an('object');
-          requestFinished();
-        });
-    });
-    it('should return error 404 if ID is invalid', function (requestFinished) {
-      chai
-        .request(server)
-        .delete('/articles/asdfghjkl')
         .end(function (err, response) {
           response.status.should.equal(404);
           response.body.should.be.an('object');

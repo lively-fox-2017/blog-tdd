@@ -4,9 +4,9 @@ const router = express.Router();
 const ArticleController = require('../../controllers/ArticleController');
 
 router.get('/', ArticleController.fetchAll);
-router.get('/:id', ArticleController.fetchById);
+router.get('/:slug', ArticleController.fetchBySlug);
 router.post('/', ArticleController.create);
-router.put('/:id', ArticleController.update);
-router.delete('/:id', ArticleController.delete);
+router.put('/:slug', ArticleController.update);
+router.delete('/:slug', ArticleController.delete);
 
 module.exports = router;

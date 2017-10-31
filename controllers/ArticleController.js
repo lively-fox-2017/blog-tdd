@@ -11,9 +11,9 @@ const ArticleController = {
       });
   },
 
-  fetchById: (req, res) => {
+  fetchBySlug: (req, res) => {
     Article
-      .findById(req.params.id)
+      .findOne({ slug: req.params.slug })
       .then((article) => {
 
         if (!article)
@@ -24,10 +24,7 @@ const ArticleController = {
       })
       .catch((err) => {
 
-        if (err.name === 'CastError')
-          res.status(404).json({});
-        else
-          res.status(400).json(err);
+        res.status(400).json(err);
 
       });
   },
@@ -51,7 +48,7 @@ const ArticleController = {
 
   update: (req, res) => {
     Article
-      .findById(req.params.id)
+      .findOne({ slug: req.params.slug })
       .then((article) => {
 
         if (!article) {
@@ -60,7 +57,7 @@ const ArticleController = {
 
           Article
             .updateOne(
-              { _id: req.params.id },
+              { slug: req.params.slug },
               {
                 title: req.body.title,
                 content: req.body.content,
@@ -83,17 +80,14 @@ const ArticleController = {
       })
       .catch((err) => {
 
-        if (err.name === 'CastError')
-          res.status(404).json({});
-        else
-          res.status(400).json(err);
+        res.status(400).json(err);
 
       });
   },
 
   delete: (req, res) => {
     Article
-      .findById(req.params.id)
+      .findOne({ slug: req.params.slug })
       .then((article) => {
 
         if (!article) {
@@ -101,7 +95,7 @@ const ArticleController = {
         } else {
 
           Article
-            .deleteOne({ _id: req.params.id })
+            .deleteOne({ slug: req.params.slug })
             .then((status) => {
               res.status(200).json(article);
             })
@@ -114,10 +108,7 @@ const ArticleController = {
       })
       .catch((err) => {
 
-        if (err.name === 'CastError')
-          res.status(404).json({});
-        else
-          res.status(400).json(err);
+        res.status(400).json(err);
 
       });
   }
