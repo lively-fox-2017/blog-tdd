@@ -9,7 +9,7 @@ const models = require('./../models');
 
 chai.use(chaiHttp);
 
-describe('Read All Posts API: GET /posts', () => {
+describe('Read All Posts API: GET /post', () => {
 	/*
 	Declare variable jwtoken for testing
 	*/
@@ -46,7 +46,7 @@ describe('Read All Posts API: GET /posts', () => {
 	*/
 	it('should generate a generic application response {status, message, payload, err}', (done) => {
 		chai.request(app)
-		.get('/posts')
+		.get('/post')
 		.end((err, response) => {
 			const appResponse = response.body;
 
@@ -60,7 +60,7 @@ describe('Read All Posts API: GET /posts', () => {
 
 			appResponse.status.should.be.a('number');
 			appResponse.message.should.be.a('string');
-			appResponse.payload.should.be.an('object');
+			appResponse.payload.should.be.an('array');
 			should.not.exist(appResponse.err);
 
 			done();
@@ -72,7 +72,7 @@ describe('Read All Posts API: GET /posts', () => {
 	*/
 	it('should contain array of posts', (done) => {
 		chai.request(app)
-		.get('/posts')
+		.get('/post')
 		.end((err, response) => {
 			const appResponse = response.body;
 

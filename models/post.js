@@ -1,8 +1,9 @@
 'use strict'
 
 const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 
-let userSchema = new mongoose.Schema({
+let postSchema = new Schema({
   title: {
     type: String,
     required: true
@@ -12,7 +13,8 @@ let userSchema = new mongoose.Schema({
     required: true
   },
   author: {
-    type: { type: Schema.Types.ObjectId, ref: 'User' },
+    type: Schema.Types.ObjectId,
+    ref: 'User',
     required: true
   },
   featured_image_url: {
@@ -20,6 +22,4 @@ let userSchema = new mongoose.Schema({
   }
 });
 
-userSchema.plugin(uniqueValidator);
-
-module.exports = mongoose.model('User', userSchema);
+module.exports = mongoose.model('Post', postSchema);
