@@ -22,11 +22,13 @@ describe('API Article', () => {
                 slug: 'slug-1',
                 title: 'Foo',
                 content: 'THIS IS CONTENT',
+                coverImage: 'https://www.pets4homes.co.uk/images/articles/771/large/cat-lifespan-the-life-expectancy-of-cats-568e40723c336.jpg',
                 author: inserted._id,
               }, {
                 slug: 'slug-2',
                 title: 'Bar',
                 content: 'THIS IS CONTENT',
+                coverImage: 'https://www.pets4homes.co.uk/images/articles/771/large/cat-lifespan-the-life-expectancy-of-cats-568e40723c336.jpg',
                 author: inserted._id,
               }])
               .then((inserted) => {
@@ -66,6 +68,7 @@ describe('API Article', () => {
                 element.should.have.property('slug');
                 element.should.have.property('content');
                 element.should.have.property('author');
+                element.should.have.property('coverImage');
                 element.should.have.property('createdAt');
                 element.author.should.an('object');
                 element.author.should.have.property('userID');
@@ -98,6 +101,7 @@ describe('API Article', () => {
               response.body[0].should.have.property('slug');
               response.body[0].should.have.property('content');
               response.body[0].should.have.property('author');
+              response.body[0].should.have.property('coverImage');
               response.body[0].should.have.property('createdAt');
               response.body[0].author.should.be.an('object');
               response.body[0].author.should.have.property('userID');
@@ -130,6 +134,7 @@ describe('API Article', () => {
                 element.should.have.property('slug');
                 element.should.have.property('content');
                 element.should.have.property('author');
+                element.should.have.property('coverImage');
                 element.should.have.property('createdAt');
                 element.author.should.an('object');
                 element.author.should.have.property('userID');
@@ -166,6 +171,7 @@ describe('API Article', () => {
           title: 'Foo',
           content: 'THIS IS CONTENT',
           author: '1573550952666971',
+          coverImage: 'https://www.pets4homes.co.uk/images/articles/771/large/cat-lifespan-the-life-expectancy-of-cats-568e40723c336.jpg',
         })
         .end(function(err, response) {
           if (err)
@@ -176,6 +182,7 @@ describe('API Article', () => {
           response.body.should.have.property('slug');
           response.body.should.have.property('content');
           response.body.should.have.property('author');
+          response.body.should.have.property('coverImage');
           response.body.should.have.property('createdAt');
           response.body.slug.should.be.an('string');
           response.body.title.should.equal('Foo');

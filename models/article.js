@@ -21,6 +21,7 @@ let articleSchema = new Schema({
     ref: 'User',
     required: true
   },
+  coverImage: String,
   createdAt: {
     type: Date,
     default: Date.now()
