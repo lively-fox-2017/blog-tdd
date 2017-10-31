@@ -9,51 +9,44 @@ let should = chai.should();
 chai.use(chaiHttp)
 
 describe('API Article', () => {
-  describe('GET API', () => {
-    before(function(done) {
-      Article.remove({})
-        .then(removed => {
-          User.create({
-              userID: '123321123312',
-              name: 'Foo',
-              email: 'foo@bar.com',
-            })
-            .then((inserted) => {
-              Article.create([{
-                  articleID: 'AAIII',
-                  title: 'Foo',
-                  content: 'THIS IS CONTENT',
-                  author: inserted._id,
-                }, {
-                  articleID: 'AAUUU',
-                  title: 'Bar',
-                  content: 'THIS IS CONTENT',
-                  author: inserted._id,
-                }])
-                .then((inserted) => {
-                  done();
-                })
-            })
-        })
-    });
+  before(function(done) {
+    Article.remove({})
+      .then(removed => {
+        User.create({
+            userID: '1573550952666971',
+            name: 'Foo',
+            email: 'foo@bar.com',
+          })
+          .then((inserted) => {
+            Article.create([{
+                slug: 'slug-1',
+                title: 'Foo',
+                content: 'THIS IS CONTENT',
+                author: inserted._id,
+              }, {
+                slug: 'slug-2',
+                title: 'Bar',
+                content: 'THIS IS CONTENT',
+                author: inserted._id,
+              }])
+              .then((inserted) => {
+                done();
+              })
+              .catch((err) => {
+                console.log('sini', err);
+              })
+          })
+      })
+  });
 
-    after((done) => {
-      Article.remove({})
-        .then(removed => {
-          done()
-        })
-    });
-    let obj = [{
-      articleID: 'AAIII',
-      title: 'Foo',
-      content: 'THIS IS CONTENT',
-      author: '123321123312',
-    }, {
-      articleID: 'AAUUU',
-      title: 'Bar',
-      content: 'THIS IS CONTENT',
-      author: '123321121231',
-    }];
+  after((done) => {
+    Article.remove({})
+      .then(removed => {
+        done()
+      })
+  });
+
+  describe('GET API', () => {
 
     it('It should return all arricles', (done) => {
       User.find()
@@ -69,21 +62,15 @@ describe('API Article', () => {
               response.body.should.have.lengthOf(2);
               response.body.forEach((element, index) => {
                 element.should.have.property('_id');
-                element.should.have.property('articleID');
                 element.should.have.property('title');
+                element.should.have.property('slug');
                 element.should.have.property('content');
                 element.should.have.property('author');
                 element.should.have.property('createdAt');
-                element.articleID.should.equal(obj[index].articleID);
-                element.title.should.equal(obj[index].title);
-                element.content.should.equal(obj[index].content);
                 element.author.should.an('object');
                 element.author.should.have.property('userID');
                 element.author.should.have.property('name');
                 element.author.should.have.property('email');
-                element.author.userID.should.equal(users[0].userID);
-                element.author.name.should.equal(users[0].name);
-                element.author.email.should.equal(users[0].email);
               })
               done();
             })
@@ -98,7 +85,7 @@ describe('API Article', () => {
       User.find()
         .then((users) => {
           chai.request(app)
-            .get('/api/article/get_article/AAIII')
+            .get('/api/article/get_article/foo')
             .send()
             .end(function(err, response) {
               if (err)
@@ -107,21 +94,15 @@ describe('API Article', () => {
               response.body.should.be.an('array');
               response.body.should.have.lengthOf(1);
               response.body[0].should.have.property('_id');
-              response.body[0].should.have.property('articleID');
               response.body[0].should.have.property('title');
+              response.body[0].should.have.property('slug');
               response.body[0].should.have.property('content');
               response.body[0].should.have.property('author');
               response.body[0].should.have.property('createdAt');
-              response.body[0].articleID.should.equal('AAIII');
-              response.body[0].title.should.equal('Foo');
-              response.body[0].content.should.equal('THIS IS CONTENT');
               response.body[0].author.should.be.an('object');
               response.body[0].author.should.have.property('userID');
               response.body[0].author.should.have.property('name');
               response.body[0].author.should.have.property('email');
-              response.body[0].author.userID.should.equal(users[0].userID);
-              response.body[0].author.name.should.equal(users[0].name);
-              response.body[0].author.email.should.equal(users[0].email);
               done();
             })
         })
@@ -145,21 +126,15 @@ describe('API Article', () => {
               response.body.should.have.lengthOf(2);
               response.body.forEach((element, index) => {
                 element.should.have.property('_id');
-                element.should.have.property('articleID');
                 element.should.have.property('title');
+                element.should.have.property('slug');
                 element.should.have.property('content');
                 element.should.have.property('author');
                 element.should.have.property('createdAt');
-                element.articleID.should.equal(obj[index].articleID);
-                element.title.should.equal(obj[index].title);
-                element.content.should.equal(obj[index].content);
                 element.author.should.an('object');
                 element.author.should.have.property('userID');
                 element.author.should.have.property('name');
                 element.author.should.have.property('email');
-                element.author.userID.should.equal(users[0].userID);
-                element.author.name.should.equal(users[0].name);
-                element.author.email.should.equal(users[0].email);
               })
               done();
             })
@@ -182,16 +157,47 @@ describe('API Article', () => {
         })
     });
   });
-  // beforeEach((done) => {
-  //   Article.remove({})
-  //     .then(removed => {
-  //       done()
-  //     })
-  // });
-  // afterEach((done) => {
-  //   Article.remove({})
-  //     .then(removed => {
-  //       done()
-  //     })
-  // });
+
+  describe('POST API', () => {
+    it('It should return inserted article', (done) => {
+      chai.request(app)
+        .post('/api/article/post_article')
+        .send({
+          title: 'Foo',
+          content: 'THIS IS CONTENT',
+          author: '1573550952666971',
+        })
+        .end(function(err, response) {
+          if (err)
+            console.log(err);
+          response.status.should.equal(201);
+          response.body.should.be.an('object');
+          response.body.should.have.property('title');
+          response.body.should.have.property('slug');
+          response.body.should.have.property('content');
+          response.body.should.have.property('author');
+          response.body.should.have.property('createdAt');
+          response.body.slug.should.be.an('string');
+          response.body.title.should.equal('Foo');
+          response.body.slug.should.equal('foo-2');
+          response.body.content.should.equal('THIS IS CONTENT');
+          done()
+        })
+    });
+
+    it('It should return 400', (done) => {
+      chai.request(app)
+        .post('/api/article/post_article')
+        .send({
+          content: 'THIS IS CONTENT',
+          author: '1573550952666971',
+        })
+        .end(function(err, response) {
+          if (err)
+            console.log(err);
+          response.status.should.equal(400);
+          done()
+        })
+    });
+  });
 });
