@@ -11,6 +11,8 @@ const app = express();
 const index = require('./routes/index');
 const post = require('./routes/post');
 
+app.use(cors());
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 
