@@ -3,10 +3,10 @@ const User = require('../models/user')
 
 module.exports = {
   register: (req, res) => {
-    // let secret = helper.secretKeyGen()
-    let password = helper.secretHash(req.body.secret, req.body.password)
+    let secret = helper.secretKeyGen()
+    let password = helper.secretHash(secret, req.body.password)
     // console.log(res.body);
-    User.create(helper.dataUser(req.body, req.body.secret, password))
+    User.create(helper.dataUser(req.body, secret, password))
     .then((result) => {
       res.status(200).json({
         message: "Berhasil Register",
