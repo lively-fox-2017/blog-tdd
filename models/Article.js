@@ -2,6 +2,8 @@ require('dotenv').config();
 const mongoose = require('mongoose');
 mongoose.connection.openUri(process.env.MONGO_URL + '_' + process.env.NODE_ENV);
 
+const slug = require('slug');
+
 const Schema = mongoose.Schema;
 
 const ArticleSchema = new Schema({
@@ -29,5 +31,22 @@ const ArticleSchema = new Schema({
     required: [true, 'Author is required']
   }
 });
+
+// Middlewares
+ArticleSchema.pre('save', function (next) {
+
+  mongoose.model('Article', ArticleSchema)
+    .find({ slug: { $regex: '.*' + this.slug + '.*' } })
+    .then((articles) => {
+      if (articles.length)
+        this.slug += '-' + articles.length.toString()
+      next();
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+
+});
+
 
 module.exports = mongoose.model('Article', ArticleSchema);

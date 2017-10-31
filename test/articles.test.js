@@ -42,12 +42,15 @@ describe('Article CRUD', function () {
           response.body.title.should.equal(article.title);
           response.body.content.should.equal(article.content);
           response.body.excerpt.should.equal(article.excerpt);
+
+          article.slug = response.body.slug;
+
           response.body.slug.should.equal(article.slug);
+          
           if (article.featured_image)
             response.body.featured_image.should.equal(article.featured_image);
           response.body.author.should.equal(article.author);
 
-          article.slug = response.body.slug;
 
           requestFinished();
         });

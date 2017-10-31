@@ -1,3 +1,5 @@
+const slug = require('slug');
+
 const Article = require('../models/Article');
 
 const ArticleController = {
@@ -30,11 +32,14 @@ const ArticleController = {
   },
 
   create: (req, res) => {
+
+    const articleSlug = slug(req.body.title || '', { lower: true });
+
     Article.create({
       title: req.body.title,
       content: req.body.content,
       excerpt: req.body.excerpt,
-      slug: req.body.slug,
+      slug: articleSlug,
       featured_image: req.body.featured_image,
       author: req.body.author
     })
@@ -44,9 +49,11 @@ const ArticleController = {
       .catch((err) => {
         res.status(400).json(err);
       });
+
   },
 
   update: (req, res) => {
+
     Article
       .findOne({ slug: req.params.slug })
       .then((article) => {
@@ -55,6 +62,8 @@ const ArticleController = {
           res.status(404).json({});
         } else {
 
+          const articleSlug = slug(req.body.title || '', { lower: true });
+
           Article
             .updateOne(
               { slug: req.params.slug },
@@ -62,7 +71,7 @@ const ArticleController = {
                 title: req.body.title,
                 content: req.body.content,
                 excerpt: req.body.excerpt,
-                slug: req.body.slug,
+                slug: articleSlug,
                 featured_image: req.body.featured_image,
                 author: req.body.author
               },
