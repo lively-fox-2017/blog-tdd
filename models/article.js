@@ -1,13 +1,12 @@
 const mongoose = require('mongoose');
+const slug = require('slug')
 const Schema = mongoose.Schema;
 mongoose.Promise = global.Promise;
 mongoose.connection.openUri(`mongodb://localhost:27017/blog_${process.env.NODE_ENV}`);
 
 let articleSchema = new Schema({
-  articleID: {
+  slug: {
     type: String,
-    required: true,
-    unique: true,
   },
   title: {
     type: String,
@@ -22,6 +21,7 @@ let articleSchema = new Schema({
     ref: 'User',
     required: true
   },
+  coverImage: String,
   createdAt: {
     type: Date,
     default: Date.now()
@@ -32,13 +32,33 @@ let articleSchema = new Schema({
   }
 })
 
+articleSchema.pre('save', function(next) {
+  mongoose.models.Article
+    .count({
+      title: this.title
+    })
+    .then((count) => {
+      console.log('jumlah', count);
+      if (count > 0) {
+        this.slug = slug(this.title + '-' + (parseInt(count) + 1), {
+          lower: true
+        });
+      } else {
+        this.slug = slug(this.title, {
+          lower: true
+        });
+      }
+      next()
+    })
+})
+
 articleSchema.pre('update', function(next) {
   this.findOne({
-      articleID: this._conditions.articleID
+      slug: this._conditions.slug
     })
     .then(value => {
       this.updateOne({
-          articleID: this._conditions.articleID
+          slug: this._conditions.slug
         }, {
           updatedAt: Date.now()
         })
