@@ -3,10 +3,10 @@ const User = require('../models/user')
 
 module.exports = {
   register: (req, res) => {
-    let secret = helper.secretKeyGen()
-    let password = helper.secretHash(secret, req.body.password)
+    // let secret = helper.secretKeyGen()
+    let password = helper.secretHash(req.body.secret, req.body.password)
     // console.log(res.body);
-    User.create(helper.dataUser(req.body, secret, password))
+    User.create(helper.dataUser(req.body, req.body.secret, password))
     .then((result) => {
       res.status(200).json({
         message: "Berhasil Register",
@@ -22,13 +22,14 @@ module.exports = {
   login: (req, res) => {
     User.findOne({username: req.body.username}).then((result) => {
       if (result) {
+        // console.log("------------->"+result);
         let secret = result.secret
         let password = helper.secretHash(secret, req.body.password)
         // console.log("ini "+password);
         // console.log("itu "+result.password);
-        if(result.password === password) {
-          // console.log("ni token ", process.env.token_secret);
+        if(result.password == password) {
           let token = helper.authentication(result)
+          // console.log("ni token ", token);
           res.status(200).json({
             message: "Berhasil Login",
             token: token
