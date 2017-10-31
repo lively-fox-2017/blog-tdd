@@ -2,7 +2,7 @@
 
 const models = require('./../models');
 const generateResponse = require('./../helpers/generate-response');
-const generateJwtoken = require('./../helpers/generate-jwtoken')
+const generateJwtoken = require('./../helpers/generate-jwtoken');
 
 class User {
 	static signup(req, res) {
