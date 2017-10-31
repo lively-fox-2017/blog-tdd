@@ -112,7 +112,7 @@ describe('Create a Post API: POST /post', () => {
 	/*
 	Test POST /post response payload
 	*/
-	it('should contain a posted object with author equals to user\'s username and have _id, title, text, author, and featured_image_url properties if token is valid and request body is valid', (done) => {
+	it('should contain a posted object with author equals to user\'s id and have _id, title, text, author, and featured_image_url properties if token is valid and request body is valid', (done) => {
 		chai.request(app)
 		.post('/post')
 		.set('jwtoken', jwtoken)
@@ -140,7 +140,7 @@ describe('Create a Post API: POST /post', () => {
 			appResponse.payload.author.should.be.a('string');
 			appResponse.payload.featured_image_url.should.be.a('string');
 
-			appResponse.payload.author.should.equal(jwtokenDecoded.username);
+			appResponse.payload.author.should.equal(jwtokenDecoded.id);
 
 			done();
 		});
@@ -149,7 +149,7 @@ describe('Create a Post API: POST /post', () => {
 	/*
 	Test POST /post response payload without featured image
 	*/
-	it('should contain a posted object with author equals to user\'s username and have _id, title, text, author, and featured_image_url properties if token is valid and request body is valid. featured_image_url should be empty', (done) => {
+	it('should contain a posted object with author equals to user\'s id and have _id, title, text, and author properties if token is valid and request body is valid (without featured_image_url).', (done) => {
 		chai.request(app)
 		.post('/post')
 		.set('jwtoken', jwtoken)
@@ -169,15 +169,12 @@ describe('Create a Post API: POST /post', () => {
 			appResponse.payload.should.have.property('title');
 			appResponse.payload.should.have.property('text');
 			appResponse.payload.should.have.property('author');
-			appResponse.payload.should.have.property('featured_image_url');
 
 			appResponse.payload._id.should.be.a('string');
 			appResponse.payload.title.should.be.a('string');
 			appResponse.payload.text.should.be.a('string');
 			appResponse.payload.author.should.be.a('string');
-			should.not.exist(appResponse.payload.featured_image_url);
-
-			appResponse.payload.author.should.equal(jwtokenDecoded.username);
+			appResponse.payload.author.should.equal(jwtokenDecoded.id);
 
 			done();
 		});
@@ -252,7 +249,7 @@ describe('Create a Post API: POST /post', () => {
 	/*
 	Test POST /post response payload with false jwtoken--should return error 403
 	*/
-	it('should return a 401 error withour any payload if jwtoken is missing', (done) => {
+	it('should return a 401 error withour any payload if jwtoken is false', (done) => {
 		chai.request(app)
 		.post('/post')
 		.set('jwtoken', falseJwtoken)

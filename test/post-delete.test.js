@@ -62,8 +62,8 @@ describe('Delete a Post API: DELETE /post', (done) => {
 	*/
 	beforeEach(done => {
 		chai.request(app)
-		.set('jwtoken', jwtoken)
 		.post('/post')
+		.set('jwtoken', jwtoken)
 		.send(fakePost)
 		.end((err, response) => {
 			validPostId = response.body.payload._id;
@@ -86,9 +86,9 @@ describe('Delete a Post API: DELETE /post', (done) => {
 	*/
 	it('should generate a generic application response {status, message, payload, err}', (done) => {
 		chai.request(app)
-		.delete('/post')
+		.delete('/post/' + validPostId)
 		.set('jwtoken', jwtoken)
-		.send(validPostId)
+		.send()
 		.end((err, response) => {
 			const appResponse = response.body;
 
@@ -114,7 +114,7 @@ describe('Delete a Post API: DELETE /post', (done) => {
 	*/
 	it('should contain an object representing number of updated content if token is valid and post id is valid', (done) => {
 		chai.request(app)
-		.delete('/post')
+		.delete('/post/' + validPostId)
 		.set('jwtoken', jwtoken)
 		.send(validPostId)
 		.end((err, response) => {
@@ -136,18 +136,12 @@ describe('Delete a Post API: DELETE /post', (done) => {
 	*/
 	it('should return a 406 error if post id is missing', (done) => {
 		chai.request(app)
-		.delete('/post')
+		.delete('/post/')
 		.set('jwtoken', jwtoken)
-		.send({})
+		.send()
 		.end((err, response) => {
-			const appResponse = response.body;
-
-			response.status.should.equal(406);
-
-			appResponse.status.should.equal(406);
-			appResponse.message.should.be.a('string');
-			should.not.exist(appResponse.payload);
-			should.exist(appResponse.err);
+			should.exist(err);
+			response.status.should.equal(404);
 
 			done();
 		});
@@ -156,11 +150,11 @@ describe('Delete a Post API: DELETE /post', (done) => {
 	/*
 	Test DELETE /post response payload with invalid post id
 	*/
-	it('should return a 404 error if post id is missing', (done) => {
+	it('should return a 404 error if post id is invalid', (done) => {
 		chai.request(app)
-		.delete('/post')
+		.delete('/post/' + falsePostId)
 		.set('jwtoken', jwtoken)
-		.send(falsePostId)
+		.send()
 		.end((err, response) => {
 			const appResponse = response.body;
 
@@ -180,8 +174,8 @@ describe('Delete a Post API: DELETE /post', (done) => {
 	*/
 	it('should return a 401 error if jwtoken is missing', (done) => {
 		chai.request(app)
-		.delete('/post')
-		.send(validPostId)
+		.delete('/post/' + validPostId)
+		.send()
 		.end((err, response) => {
 			const appResponse = response.body;
 
@@ -201,7 +195,7 @@ describe('Delete a Post API: DELETE /post', (done) => {
 	*/
 	it('should return a 403 error if jwtoken is invalid', (done) => {
 		chai.request(app)
-		.delete('/post')
+		.delete('/post/' + validPostId)
 		.set('jwtoken', falseJwtoken)
 		.send(validPostId)
 		.end((err, response) => {

@@ -12,6 +12,20 @@ chai.use(chaiHttp);
 
 describe('Update a Post API: PUT /post', () => {
 	/*
+	Declare variable postId for testing
+	*/
+	let validPostId = null;
+	let invalidPostId = require('mongoose').Types.ObjectId();
+
+	/*
+	valid update for testing
+	*/
+	const validUpdate = {
+		title: 'This Is An Updated Post',
+		text: 'This is updated post content'
+	}
+
+	/*
 	Declare variable jwtoken for testing
 	*/
 	let jwtoken = null;
@@ -56,35 +70,11 @@ describe('Update a Post API: PUT /post', () => {
 	*/
 	beforeEach(done => {
 		chai.request(app)
-		.set('jwtoken', jwtoken)
 		.post('/post')
+		.set('jwtoken', jwtoken)
 		.send(fakePost)
 		.end((err, response) => {
-			/*
-			valid update for testing
-			*/
-			const validUpdate = {
-				_id: response.body.payload._id,
-				title: 'This Is An Updated Post',
-				text: 'This is updated post content'
-			}
-
-			/*
-			invalid update--missing post id for testing
-			*/
-			const invalidUpdateMissingId = {
-				title: 'This Is An Updated Post',
-				text: 'This is updated post content'
-			}
-
-			/*
-			invalid update--false post id for testing
-			*/
-			const invalidUpdateFalseId = {
-				_id: require('mongoose').Types.ObjectId(),
-				title: 'This Is An Updated Post',
-				text: 'This is updated post content'
-			}
+			validPostId = response.body.payload._id;
 
 			done();
 		});
@@ -104,7 +94,7 @@ describe('Update a Post API: PUT /post', () => {
 	*/
 	it('should generate a generic application response {status, message, payload, err}', (done) => {
 		chai.request(app)
-		.put('/post')
+		.put('/post/' + validPostId)
 		.set('jwtoken', jwtoken)
 		.send(validUpdate)
 		.end((err, response) => {
@@ -132,7 +122,7 @@ describe('Update a Post API: PUT /post', () => {
 	*/
 	it('should contain an object representing number of updated content if token is valid and post id is valid', (done) => {
 		chai.request(app)
-		.put('/post')
+		.put('/post/' + validPostId)
 		.set('jwtoken', jwtoken)
 		.send(validUpdate)
 		.end((err, response) => {
@@ -156,16 +146,10 @@ describe('Update a Post API: PUT /post', () => {
 		chai.request(app)
 		.put('/post')
 		.set('jwtoken', jwtoken)
-		.send(invalidUpdateMissingId)
+		.send(validUpdate)
 		.end((err, response) => {
-			const appResponse = response.body;
-
-			response.status.should.equal(406);
-
-			appResponse.status.should.equal(406);
-			appResponse.message.should.be.a('string');
-			should.not.exist(appResponse.payload);
-			should.exist(appResponse.err);
+			should.exist(err);
+			response.status.should.equal(404);
 
 			done();
 		});
@@ -174,11 +158,11 @@ describe('Update a Post API: PUT /post', () => {
 	/*
 	Test PUT /post response payload with invalid post id
 	*/
-	it('should return a 404 error if post id is missing', (done) => {
+	it('should return a 404 error if post id is invalid', (done) => {
 		chai.request(app)
-		.put('/post')
+		.put('/post/' + invalidPostId)
 		.set('jwtoken', jwtoken)
-		.send(invalidUpdateFalseId)
+		.send(validUpdate)
 		.end((err, response) => {
 			const appResponse = response.body;
 
@@ -198,7 +182,7 @@ describe('Update a Post API: PUT /post', () => {
 	*/
 	it('should return a 401 error if jwtoken is missing', (done) => {
 		chai.request(app)
-		.put('/post')
+		.put('/post/' + validPostId)
 		.send(validUpdate)
 		.end((err, response) => {
 			const appResponse = response.body;
@@ -219,7 +203,7 @@ describe('Update a Post API: PUT /post', () => {
 	*/
 	it('should return a 403 error if jwtoken is invalid', (done) => {
 		chai.request(app)
-		.put('/post')
+		.put('/post/' + validPostId)
 		.set('jwtoken', falseJwtoken)
 		.send(validUpdate)
 		.end((err, response) => {
