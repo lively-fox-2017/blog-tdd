@@ -122,9 +122,9 @@ describe('Article Routes result', function() {
     })
   })
 
-  it('Should return error when article id is not find', function(done) {
+  it('Should return error when userid is not find', function(done) {
     chai.request(app)
-    .get('/articles/79f72ccaa06261535e60a4d2')
+    .get('/articles/59f72ccaa06261535e60a312')
     .end((err, res) => {
       // console.log("---------->", res.body);
       res.status.should.equal(400)
@@ -134,20 +134,20 @@ describe('Article Routes result', function() {
     })
   })
 
-  it('Should return One Article', function(done) {
+  it('Should return Articles Posted By that User', function(done) {
     chai.request(app)
-    .get('/articles/59f75dddfd45eb73f44332f6')
+    .get('/articles/59f72ccaa06261535e60a3c8')
     .end((err, res) => {
       // console.log("---------->", res.body);
       res.status.should.equal(200)
       res.body.should.be.an('object')
-      res.body.message.should.equal("Tampil Satu Data Product")
-      res.body.data.should.have.property('_id')
-      res.body.data.should.have.property('user')
-      res.body.data.should.have.property('judul')
-      res.body.data.should.have.property('deskripsi')
-      res.body.data.should.have.property('createdAt')
-      res.body.data.should.have.property('updatedAt')
+      res.body.message.should.equal("Tampil Data Article")
+      res.body.data[0].should.have.property('_id')
+      res.body.data[0].should.have.property('user')
+      res.body.data[0].should.have.property('judul')
+      res.body.data[0].should.have.property('deskripsi')
+      res.body.data[0].should.have.property('createdAt')
+      res.body.data[0].should.have.property('updatedAt')
       done()
     })
   })

@@ -4,7 +4,7 @@ const controller = require('../controller/articleController')
 
 router.get('/', controller.findAll)
 
-router.get('/:id', controller.findOne)
+router.get('/:userid', controller.findById)
 
 router.post('/insert', controller.insert)
 

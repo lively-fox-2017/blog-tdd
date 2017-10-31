@@ -16,13 +16,13 @@ module.exports = {
     })
   },
 
-  findOne: (req, res) => {
-    Article.findOne({_id: req.params.id}).populate('user').then((rowArticle) => {
+  findById: (req, res) => {
+    Article.find({user: req.params.userid}).then((rowArticle) => {
       // console.log("HAIIIIIIIIIIIIIIIIIII", req.params.id);
       // console.log("-------------------->", rowArticle);
-      if (rowArticle) {
+      if (rowArticle.length != 0) {
         res.status(200).json({
-          message: "Tampil Satu Data Product",
+          message: "Tampil Data Article",
           data: rowArticle
         })
       } else {
