@@ -8,6 +8,8 @@ const router = express.Router();
 
 router.get('/', controllers.Post.readAllPosts);
 
+router.get('/:id', controllers.Post.readOne);
+
 router.post('/', isUser, controllers.Post.create);
 
 router.put('/:id', isUser, controllers.Post.update);

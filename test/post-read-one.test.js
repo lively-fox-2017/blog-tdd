@@ -21,6 +21,14 @@ describe('Read One Post: API: GET /post/:id', () => {
   let validImageUrl = null;
 
   /*
+  fake user
+  */
+  const fakeUser = {
+    username: 'user',
+    password: 'user'
+  }
+
+  /*
   fake post
   */
   const fakePost = {
@@ -35,10 +43,7 @@ describe('Read One Post: API: GET /post/:id', () => {
   before(done => {
     chai.request(app)
     .post('/signup')
-    .send({
-      username: 'user',
-      password: 'user'
-    })
+    .send(fakeUser)
     .end((err, response) => {
       let jwtoken = response.body.payload.jwtoken;
       chai.request(app)
@@ -49,8 +54,8 @@ describe('Read One Post: API: GET /post/:id', () => {
         validPostId = response.body.payload._id;
         validTitle = response.body.payload.title;
         validText = response.body.payload.text;
-        validAuthor = response.body.payload.author.username;
         validImageUrl = response.body.payload.featured_image_url;
+        validAuthor = fakeUser.username;
 
         done();
       });
@@ -97,7 +102,7 @@ describe('Read One Post: API: GET /post/:id', () => {
   /*
   Test GET /post response payload
   */
-  it('should contains a post', (done) => {
+  it('should contains a post with _id, title, text, author, and featured_image_url properties', (done) => {
     chai.request(app)
     .get('/post/' + validPostId)
     .end((err, response) => {
@@ -119,7 +124,7 @@ describe('Read One Post: API: GET /post/:id', () => {
       appResponse.payload._id.should.equal(validPostId);
       appResponse.payload.title.should.equal(validTitle);
       appResponse.payload.text.should.equal(validText);
-      appResponse.payload.author.should.equal(validAuthor);
+      appResponse.payload.author.username.should.equal(validAuthor);
       appResponse.payload.featured_image_url.should.equal(validImageUrl);
 
       done();
@@ -127,14 +132,20 @@ describe('Read One Post: API: GET /post/:id', () => {
   });
 
   /*
-  Test GET /post response payload with missing post id
+  Test GET /post response payload with invalid post id
   */
-  it('should return a 406 error if post id is missing', (done) => {
+  it('should return a 406 error if post id is invalid', (done) => {
     chai.request(app)
-    .get('/post/')
+    .get('/post/' + invalidPostId)
     .end((err, response) => {
-      should.exist(err);
+      const appResponse = response.body;
+
       response.status.should.equal(404);
+
+      appResponse.status.should.equal(404);
+      appResponse.message.should.be.a('string');
+      should.not.exist(appResponse.payload);
+      should.exist(appResponse.err);
 
       done();
     });

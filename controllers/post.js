@@ -5,7 +5,7 @@ const generateResponse = require('./../helpers/generate-response');
 
 class Post {
   static readAllPosts(req, res) {
-    models.Post.find().exec()
+    models.Post.find().populate('author', 'username').exec()
     .then(posts => {
       const resp = generateResponse(200, 'read all posts', posts, null);
       res.status(200).send(resp);
@@ -14,6 +14,23 @@ class Post {
       const resp = generateResponse(500, 'failed to read all posts', null, posts);
       res.status(500).send(resp)
     });
+  }
+
+  static readOne(req, res) {
+    models.Post.findById(req.params.id).populate('author', 'username').exec()
+    .then(post => {
+      if (post) {
+        const resp = generateResponse(200, `get post with id ${req.params.id}`, post, null);
+        res.status(200).send(resp);
+      } else {
+        const resp = generateResponse(404, `No post with id ${req.params.id}`, null, {msg: 'Invalid post Id'});
+        res.status(404).send(resp);
+      }
+    })
+    .catch(err => {
+      const resp = generateResponse(500, `failed to get post with id ${req.params.id}`, null, err);
+      res.status(500).send(resp);
+    })
   }
 
   static create(req, res) {
