@@ -60,6 +60,15 @@ class Model {
       })
     })
   }
+  static readByUserId(id) {
+    return new Promise((resolve, reject)=>{
+      Blog.find({author:id}).then((data)=>{
+        resolve(data)
+      }).catch((err)=>{
+        reject(err)
+      })
+    })
+  }
   static delete(id) {
     return new Promise((resolve, reject)=>{
       Blog.findOneAndRemove({"_id":id}).then((data)=>{

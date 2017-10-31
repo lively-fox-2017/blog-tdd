@@ -89,6 +89,31 @@ describe('testing article api', function() {
       })
     })
   })
+  describe('get all article data by user_id', function() {
+    it('should return all article from user', function(done) {
+      chai.request(app).get('/api/article/user/59f7402ac7f8496fe760b8fa').end(function(err, response) {
+        response.status.should.equal(200)
+        response.body.should.be.an('array')
+        response.body.should.have.lengthOf(1)
+        var insertedData1 = {
+          title: 'Title Baru',
+          content: 'Content Baru',
+          author: '59f7402ac7f8496fe760b8fa',
+        }
+        response.body[0].should.like(insertedData1);
+
+        done()
+      })
+    })
+    it('should error id not valid', function(done) {
+      chai.request(app).get('/api/article/user/59f7402ac7f496fe760b8fa').end(function(err, response) {
+        response.status.should.equal(500)
+        response.body.should.be.an('object')
+        response.body.message.should.equal('Cast to ObjectId failed for value "59f7402ac7f496fe760b8fa" at path "author" for model "Blog"')
+        done()
+      })
+    })
+  })
   describe('get one article data', function() {
     it('should return one data', function(done) {
       chai.request(app).get('/api/article/' + idDummy).end(function(err, response) {

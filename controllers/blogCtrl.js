@@ -41,6 +41,13 @@ class BlogCtrl {
       res.status(500).send(err)
     })
   }
+  static readByUserId(req, res, next) {
+    Blog.readByUserId(req.params.user_id).then((data) => {
+      res.status(200).send(data)
+    }).catch((err) => {
+      res.status(500).send(err)
+    })
+  }
 }
 
 module.exports = BlogCtrl;
