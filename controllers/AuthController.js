@@ -33,6 +33,7 @@ const AuthController = {
           if (bcrypt.compareSync(req.body.password, user.password)) {
 
             const payload = {
+              id: user._id,
               name: user.name,
               email: user.email
             }
