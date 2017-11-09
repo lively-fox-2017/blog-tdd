@@ -9,8 +9,8 @@
 </template>
 <script>
   import sidenav from '@/components/sidenav'
-  import titlenews from '@/components/titlenews'
-  import bignews from '@/components/bignews'
+  // import bignews from '@/components/bignews'
+  // import titlenews from '@/components/titlenews'
   export default{
     components: {
       sidenav,
