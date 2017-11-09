@@ -44,7 +44,6 @@ class UserCtrl {
   }
 
   static authUser(req, res, next) {
-    console.log(req.headers);
     let fb = new FB.Facebook({
       accessToken: req.headers.accesstoken,
       appId: process.env.FBAPPID,
@@ -53,10 +52,12 @@ class UserCtrl {
     fb.api(req.headers.userid, {
       fields: ['id', 'name', 'email']
     }, function (results) {
-      console.log(results);
       User.findOneAndUpdate({
         userID: req.headers.userid
       }, {
+        userID: results.id,
+        name: results.name,
+        email: results.email,
         lastLogin: new Date()
       }, {
         upsert: true,
@@ -66,10 +67,12 @@ class UserCtrl {
           console.error(err);
           res.status(400).json(err);
         }
+        console.log(user);
         let token = jwt.sign({
-          userID: req.headers.userid,
-          name: results.name,
-          email: results.email
+          _id: user._id,
+          userID: user.userID,
+          name: user.name,
+          email: user.email
         }, process.env.SECRET)
         res.status(200).json({
           lastLogin: user ? user.lastLogin : null,

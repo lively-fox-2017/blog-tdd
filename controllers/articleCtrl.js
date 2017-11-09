@@ -3,22 +3,49 @@ const User = require('../models/user');
 
 class ArticleCtrl {
   static postArticle(req, res, next) {
-    User.findOne({
-        userID: req.body.author
+    Article.create({
+      title: req.body.title,
+      content: req.body.content,
+      author: req.body.author,
+      coverImage: req.file.cloudStoragePublicUrl
+    })
+      .then((inserted) => {
+        res.status(201).json(inserted);
       })
-      .then((user) => {
-        if (user) {
-          req.body.author = user._id;
-          Article.create(req.body)
-            .then((inserted) => {
-              res.status(201).json(inserted);
-            })
-            .catch((err) => {
-              res.status(400).json(err);
-            })
-        } else {
-          res.status(204).json({});
-        }
+      .catch((err) => {
+        res.status(400).json(err);
+      })
+  }
+
+  static deleteArticle(req, res, next) {
+    Article.findOneAndRemove({
+      _id: req.params.articleId
+    })
+      .then((deleted) => {
+        res.status(200).json(deleted);
+      })
+      .catch((err) => {
+        res.status(400).json(err);
+      })
+  }
+
+  static updateArticle(req, res, next) {
+    console.log('here');
+    Article.findOneAndUpdate({
+      slug: req.params.slug
+    }, {
+      title: req.body.title,
+      content: req.body.content,
+      author: req.body.author,
+      coverImage: req.file.cloudStoragePublicUrl
+    }, {
+      new: true
+    })
+      .then((article) => {
+        res.status(200).json(article)
+      })
+      .catch((err) => {
+        res.status(400).json(err)
       })
   }
 
