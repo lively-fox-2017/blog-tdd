@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 const encrypt = require('../helpers/cryptoHelper')
 const jwt = require('jsonwebtoken')
-mongoose.connect('mongodb://localhost/blogtdd_' + process.env.NODE_ENV, {
+mongoose.connect('mongodb://'+process.env.DB_USER+':'+process.env.DB_PASS+'@cluster0-shard-00-00-jlkah.mongodb.net:27017,cluster0-shard-00-01-jlkah.mongodb.net:27017,cluster0-shard-00-02-jlkah.mongodb.net:27017/blogtdd_development?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin', {
   useMongoClient: true
 })
 mongoose.Promise = global.Promise
